@@ -1,0 +1,80 @@
+"""
+This program recursively draws a pattern
+of square to a graphics window.
+(Hannah Bown, 11-20-11)
+"""
+
+from graphics import *
+
+def main():
+
+  depth = -1
+  print
+  while (depth < 0):
+    depth = input("Enter depth value: ")
+  print
+
+  win = GraphWin("Fractals", 600, 600)
+  win.setBackground("black")
+
+  drawsquares(win, depth, 600, Point(200,200), Point(400,400), "orange", 0, 0)
+
+  message = Text(Point(300, 580), "Click to exit")
+  message.setTextColor("white")
+  message.draw(win)
+  win.getMouse()
+  win.close()
+
+
+#####################################################
+def drawsquares(win, depth, dim, pt1, pt2, color, dx, dy):
+
+  """
+  This function draws squares.
+
+  Input -- graphics window, depth, diminsions of window
+  Return -- None
+  """
+
+  if (depth == 0):
+    square = Rectangle(pt1, pt2)
+    square.setFill(color)
+    square.draw(win)
+    return
+  else:
+
+    square = Rectangle(pt1, pt2)
+    square.setFill(color)
+    square.draw(win)
+
+    #top left corner
+    drawsquares(win, depth-1, dim/3, Point(dim/9+dx,dim/9+dy),\
+        Point((dim/9)*2+dx, (dim/9)*2+dy), "red", dx, dy)
+    #top middle
+    drawsquares(win, depth-1, dim/3, Point(dim/3+dim/9+dx, dim/9+dy),\
+        Point(2*(dim/3)-dim/9+dx, 2*(dim/9)+dy), "blue", dx+dim/3, dy)
+    #top right corner
+    drawsquares(win, depth-1, dim/3, Point(2*(dim/3)+dim/9+dx,dim/9+dy),\
+        Point(dim-dim/9+dx,2*(dim/9)+dy), "green", dx+2*(dim/3), dy)
+    #left
+    drawsquares(win, depth-1, dim/3, Point(dim/9+dx,dim/3+dim/9+dy),\
+        Point((dim/9)*2+dx,2*(dim/3)-dim/9+dy), "yellow", dx, dy+dim/3)
+    #right
+    drawsquares(win, depth-1, dim/3, Point(2*(dim/3)+dim/9+dx,dim/3+dim/9+dy),\
+        Point(dim-dim/9+dx,2*(dim/3)-dim/9+dy), "purple", dx+2*(dim/3), dy+dim/3)
+    #bottom left corner
+    drawsquares(win, depth-1, dim/3, Point(dim/9+dx,2*(dim/3)+dim/9+dy),\
+        Point((dim/9)*2+dx,dim-dim/9+dy), "white", dx, dy+2*(dim/3))
+    #bottom middle
+    drawsquares(win, depth-1, dim/3, Point(dim/3+dim/9+dx,2*(dim/3)+dim/9+dy),\
+        Point(2*(dim/3)-dim/9+dx,dim-dim/9+dy), "brown", dx+dim/3, dy+2*(dim/3))
+    #bottom right corner
+    drawsquares(win, depth-1, dim/3, Point(2*(dim/3)+dim/9+dx,2*(dim/3)+dim/9+dy),\
+        Point(dim-dim/9+dx,dim-dim/9+dy), "darkgreen", dx+2*(dim/3), dy+2*(dim/3))
+
+
+
+
+
+main()
+

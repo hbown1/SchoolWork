@@ -1,0 +1,61 @@
+// Hannah Bown, 2012 (Lab 05)
+// ArrayStack.inl
+
+
+
+/* Consructor
+ */
+template <typename T>
+ArrayStack<T>::ArrayStack() {
+
+}
+
+/* Destructor - deallocates array from heap.
+ */
+template <typename T>
+ArrayStack<T>::~ArrayStack() {
+}
+
+/* push - inserts item at top of stack
+ */
+template <typename T>
+void ArrayStack<T>::push(T item){
+
+  items.insertAtHead(item);
+
+}
+
+/* pop - removes and returns top item
+ */
+template <typename T>
+T ArrayStack<T>::pop() {
+
+  return items.removeHead();
+
+}
+
+/* getSize - returns number of elements stored in the list.
+ */
+template <typename T>
+int ArrayStack<T>::getSize() {
+  return items.getSize();
+}
+
+/* isEmpty - returns true if there are no items in the list
+ */
+template <typename T>
+bool ArrayStack<T>::isEmpty(){
+  int size = items.getSize();
+  return size == 0;
+}
+
+/* getTop - returns a reference to top item
+ */
+template <typename T>
+T ArrayStack<T>::getTop() {
+
+  return items.peekHead();
+
+}
+
+

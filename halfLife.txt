@@ -1,0 +1,76 @@
+"""
+This program will ask the user for the number of atoms in the
+starting population and the half-life period and simulate the
+decay of atoms one half-life at a time until there are no more
+atoms left.
+(Hannah Bown, 10-10-11)
+"""
+
+from time import *
+
+def main():
+
+  print
+  atoms = getPositiveInt("Enter the initial number of atoms: ")
+  print atoms
+
+  halflife = -10
+  while (halflife <= 0):
+    halflife = input("Enter half-life period: ")
+    if (halflife <= 0):
+      print "Error. Value must be positive."
+
+  print "The initial population size is", atoms
+
+  times = decayToZero(atoms, halflife)
+
+  print
+  print "The total duration of time it took to decay all of the atoms"
+  print "in the inital population is", halflife * times, "seconds."
+  print
+
+
+
+#############################
+
+def getPositiveInt(message):
+
+  number = -10
+  while (number <= 0):
+    number = input(message)
+    if (number <= 0):
+      print number, "is not a positive integer. Try again."
+    else:
+      number = int(number)
+  return number
+
+#############################
+
+#############################
+
+def oneHalfLife(pop_size, time):
+
+  sleep(time)
+
+  pop_size = pop_size/2
+
+  return pop_size
+
+#############################
+
+#############################
+
+def decayToZero(start_size, time):
+
+  times = 0
+  while (start_size != 0):
+    start_size = oneHalfLife(start_size, time)
+    print "The remaining population is", start_size
+    times = times + 1
+  print times, "half-life periods have occurred."
+  return times
+
+#############################
+
+main()
+                                            

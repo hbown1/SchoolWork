@@ -1,0 +1,91 @@
+## reverseLinkedList.py ##
+## Creates list class and reverses list ##
+## Hannah Bown - 1/22/15 ##
+
+class Node:
+    def __init__(self,data):
+        self.data = data
+        self.next = None
+
+class List:
+    def __init__(self):
+        self.nodeOne = Node(None)
+
+    def insertAtHead(self, newNode):
+        if (self.nodeOne.data == None):
+            self.nodeOne.data = newNode.data
+        else:
+            temp = None
+            temp = self.nodeOne
+            self.nodeOne = newNode
+            self.nodeOne.next = temp
+
+    def __show(self,start):
+        if start:
+            print start.data
+            self.__show(start.next)
+
+    def printList(self):
+        self.__show(self.nodeOne)
+
+    def __reverse_recursive(self, node):
+        temp = None
+        if not node.next: return node
+        else:
+            temp = self.__reverse_recursive(node.next)
+            node.next.next = node
+            node.next = None
+        return temp
+
+    def reverse_list(self):
+        self.nodeOne = self.__reverse_recursive(self.nodeOne)
+
+    def __reverse_iterative(self, node):
+        temp = None
+        previous = None
+        while node or node.next:
+            if not node.next:
+                node.next = previous
+                previous = node
+                break
+            else:
+                temp = node.next
+                node.next = previous
+                previous = node
+                node = temp
+        return previous
+
+    def reverse_iterative(self):
+        self.nodeOne = self.__reverse_iterative(self.nodeOne)
+
+
+
+
+
+def main():
+
+    nodeA = Node("A")
+    nodeB = Node("B")
+    nodeC = Node("C")
+    nodeD = Node("D")
+    nodeE = Node("E")
+
+    list1 = List()
+
+    list1.insertAtHead(nodeE)
+    list1.insertAtHead(nodeD)
+    list1.insertAtHead(nodeC)
+    list1.insertAtHead(nodeB)
+    list1.insertAtHead(nodeA)
+
+    print "list"
+    list1.printList()
+    print "list reverse"
+    list1.reverse_list()
+    list1.printList()
+    list1.reverse_iterative()
+    print "list reverse reverse"
+    list1.printList()
+
+main()
+                                            

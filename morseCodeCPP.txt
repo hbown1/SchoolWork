@@ -1,0 +1,174 @@
+// Hannah Bown and Dionne Wilson (2012)
+// morseCode.cpp
+
+#include <stdlib.h>  // Used for pseudo-random number generation.
+#include <assert.h>
+#include "pair.h"
+#include "iterator.h"
+#include "bst.h"
+#include "linkedbst.h"
+#include "library/circulararraylist.h"
+#include <ctype.h>
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+LinkedBst<char,string>* translationDict(string filename);
+string getEntry(LinkedBst<char,string>* dict);
+void printEncoding(string entry, LinkedBst<char,string>* dict);
+void printAlpha(LinkedBst<char,string>* dict);
+void printInOrder(LinkedBst<char,string>* dict);
+
+int main() {
+
+  cout << endl;
+
+  string filename;
+  cout << "Enter filename for English to Morse code translator: ";
+  getline(cin, filename);
+
+  // Create dictionary
+  LinkedBst<char,string>* dict = translationDict(filename);
+
+  // Get valid entry from user
+  string entry = getEntry(dict);
+
+  cout << endl;
+
+  printEncoding(entry, dict);
+
+  cout << endl;
+  cout << endl << "**********************************" << endl << endl;
+
+  cout << "The height of the tree is: " << dict->getHeight() << endl;
+  cout << "There are " << dict->getSize() << " nodes in the tree" << endl;
+  cout << endl;
+
+  printAlpha(dict);
+  cout << endl << endl << endl;
+  printInOrder(dict);
+  cout << endl << endl;
+
+  delete dict;
+
+  return 0;
+}
+
+// Reads in the file and creates a linkedBst of the data
+LinkedBst<char,string>* translationDict(string filename){
+
+  // Creates new LinkedBst
+  LinkedBst<char,string>* dict = new LinkedBst<char,string>();
+
+  ifstream infile;
+  infile.open(filename.c_str(), ifstream::in);
+  if( !infile.is_open() ){
+    cout << "Your file did not open correctly." << endl;
+    exit(1);
+  }
+
+  char letter;
+  string code;
+
+  // Until reaches end of file, inserts letter and code into linkedbst
+  infile >> letter >> code;
+  while (!infile.eof()){
+    dict->insert(letter,code);
+    infile >> letter >> code;
+  }
+
+  return dict;
+
+
+}
+
+// Gets a valid user entry and returns it
+string getEntry(LinkedBst<char,string>* dict){
+
+  string entry;
+  bool valid = false;
+
+  while (valid == false) {
+    cout << "Enter phrase: ";
+    getline(cin, entry);
+
+    // Converts entry to all uppercase letters
+    int j = 0;
+    while (entry.length() != j){
+      if (entry[j] != ' '){
+        entry[j] = toupper(entry[j]);
+      }
+      j++;
+    }
+
+    // Checks that the entry is valid
+    int i = 0;
+    while (entry.length() != i){
+      // Check if the character is in the dict, or is a space
+      if ((dict->contains(entry[i])) || (entry[i] == ' ')) {
+        valid = true;
+      } else {
+        valid = false;
+      }
+      i++;
+    }
+    if (valid == false) {
+      cout << "Invalid phrase. Please only use letters." << endl;
+    }
+  }
+
+  return entry;
+
+}
+
+// Prints the translated sentence
+void printEncoding(string entry, LinkedBst<char,string>* dict){
+
+  cout << "The encoding is: " << endl;
+
+  int i = 0;
+  while (entry.length() != i){      // while there are still letters
+                                    // left to translate
+    if (entry[i] != ' ') {          // if it's not a space, translate
+      cout << dict->find(entry[i]) << " ";
+    } else if (entry[i] == ' ') {   // if it is a space, new line
+      cout << endl;
+    }
+    i++;
+  }
+
+
+}
+
+// Prints translator dictionary in alphabetical order
+void printAlpha(LinkedBst<char,string>* dict){
+
+  cout << "Translator in alphabetical order: " << endl;
+
+  // Creates iterator
+  Iterator< Pair<char,string> >* iter = dict->getInOrderIterator();
+  // Iterates through dict and prints pairs
+  while (iter->hasNext()){
+    Pair<char,string> pair = iter->getNext();
+    cout << pair.first << " | " << pair.second << endl;
+  }
+
+
+}
+
+// Print translator dictionary in order by level
+void printInOrder(LinkedBst<char,string>* dict){
+
+  cout << "Tree in order by level: " << endl;
+
+  // Creates iterator
+  Iterator< Pair<char,string> >* iter = dict->getLevelOrderIterator();
+  // Iterates through dict and prints pairs
+  while (iter->hasNext()){
+    Pair<char,string> pair = iter->getNext();
+    cout << pair.first << " | " << pair.second << endl;
+  }
+
+}
+
+

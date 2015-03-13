@@ -1,0 +1,374 @@
+"""
+This program implements something similar
+to Google's "Did you mean" feature.
+(Hannah Bown, 11-4-11)
+"""
+
+def main():
+
+  Intro()
+
+  wordfile = convertlist()
+
+  getEntry(wordfile)
+
+################################################
+def getEntry(wordfile):
+
+  entry = ""  #initialize while loop
+  while (entry == ""):
+    print
+    entry = raw_input("Enter a word: ")
+  if (entry == "QUIT"):
+    print
+    print "Hope I could help!"
+    print
+    exit()
+
+  entry = entry.lower()
+
+  infile  = checkfile(entry, wordfile)
+
+  if (infile == -1):    #if not found, make alt_list
+    alt_list(entry,wordfile)
+  else:
+    print "Found."
+    getEntry(wordfile)
+
+################################################
+def Intro():
+
+  """
+  This function tells the user what the program does.
+
+  Input -- none
+  Return -- none
+  """
+
+  print
+  print "Hello!"
+  print
+  print """  Welcome to "Did You Mean?". This program
+  will search a list of know words to see if your
+  search query is a valid word. If not, it will
+  suggets alternate spellings that are valid words."""
+  print
+  print "Enter 'QUIT' at any time to exit the program."
+  print
+
+
+################################################
+def convertlist():
+
+  """
+  This function converts the wordcts.txt file
+  into a list of lists of strings and ints.
+
+  Input -- none
+  Return -- converted list
+  """
+
+  original = open("/usr/local/doc/wordcts.txt","r")
+
+  new_list = original.readlines()
+  biglist = []
+
+  for i in range(len(new_list)-1):
+    smalllist = []
+    new_list[i] = new_list[i].split()
+    word = str(new_list[i][0])   #make words into strings
+    number = int(new_list[i][1]) #make numbers into ints
+    smalllist.append(word)
+    smalllist.append(number)
+    biglist.append(smalllist)
+
+  return biglist
+
+
+
+################################################
+def checkfile(entry, wordfile):
+
+  """
+  This function checks the wordcts.txt for
+  the entered word.
+
+  Input -- user's entry, list of words
+  Return -- frequency, if found; -1 else
+  """
+
+
+  low = 0
+  high = len(wordfile) - 1
+
+  infile = -1  #word starts as not found
+
+  while (low <= high):
+    mid = (low+high)/2
+    possible_entry = wordfile[mid]
+    possible_word = possible_entry[0]
+    if (entry == possible_word):
+      infile = possible_entry[1]  #returns frequency
+      break
+    elif (entry < possible_word):
+      high = mid - 1
+    else:
+      low = mid + 1
+
+  return infile
+
+
+
+################################################
+def alt_list(entry, wordfile):
+
+  """
+  This function calls functions to form a list of
+  alternate spelling and generates a list
+  sorted by frequency of use.
+
+  Input -- user's entry, list of words
+  Return -- list of possible words, sorted by frequency
+  """
+
+  alt_words = []
+
+  delete = deletions(entry, wordfile)
+  if (delete != []):
+    alt_words += delete
+
+  trans = transpositions(entry, wordfile)
+  if (trans != []):
+    alt_words += trans
+
+  subs = substitutions(entry, wordfile)
+  if (subs != []):
+    alt_words += subs
+
+  inserts = insertions (entry, wordfile)
+  if (inserts != []):
+    alt_words += inserts
+
+  if (alt_words == []):
+    print "No entries found."
+    getEntry(wordfile)
+  else:
+    sorted_alt = sort(alt_words)
+    print_alt_list(sorted_alt, wordfile)
+
+################################################
+def deletions(entry, wordfile):
+
+  """
+  This function forms a list of possible
+  alternatives to the user's entry by
+  generating all possible single-letter
+  deletions.
+
+  Input -- user's entry, list of words
+  Return -- alternate spellings also found
+            in the list of words
+  """
+  valid = []
+
+  for i in range(len(entry)):
+    inlist = False
+    maybe_word = entry[0:i] + entry[i+1:len(entry)]
+    # delete one letter each time
+    for k in range(len(valid)):
+      if (maybe_word == valid[k][0]):
+        inlist = True
+    if ((checkfile(maybe_word, wordfile) > 0) and\
+        (inlist == False)):
+      # if the alt word is a valid word, and is
+      # not already recorded, it will be added
+      small_list = []
+      small_list.append(maybe_word) # append word
+      small_list.append(checkfile(maybe_word, wordfile)) # append frequency
+      valid.append(small_list)
+  return valid
+
+
+
+################################################
+def transpositions(entry, wordfile):
+
+  """
+  This function forms a list of possible
+  alternatives to the user's entry by
+  generating all possible transpositions.
+
+  Input -- user's entry, list of words
+  Return -- alternate spellings also found
+            in the list of words
+  """
+
+  valid = []
+
+  for i in range(len(entry)-1):
+    inlist = False
+    maybe_word = entry[0:i] + entry[i+1] + entry[i] + entry[i+2:len(entry)]
+    for k in range(len(valid)):
+      if (maybe_word == valid[k][0]):
+        inlist = True
+    if ((checkfile(maybe_word, wordfile) > 0) and\
+        (inlist == False)):
+      small_list = []
+      small_list.append(maybe_word)
+      small_list.append(checkfile(maybe_word, wordfile))
+      valid.append(small_list)
+
+  return valid
+
+
+################################################
+def substitutions(entry, wordfile):
+
+  """
+  This function forms a list of possible
+  alternatives to the user's entry by
+  generating all possible single-letter
+  substitutions.
+
+  Input -- user's entry, list of words
+  Return -- alternate spellings also found
+            in the list of words
+
+  """
+
+  valid = []
+
+  for i in range(len(entry)):
+    for j in range(26):
+      inlist = False
+      maybe_word = entry[0:i] + chr(97+j) + entry[i+1: len(entry)]
+      for k in range(len(valid)):
+        if (maybe_word == valid[k][0]):
+          inlist = True
+      if ((checkfile(maybe_word, wordfile) > 0) and\
+          (inlist == False)):
+        small_list = []
+        small_list.append(maybe_word)
+        small_list.append(checkfile(maybe_word, wordfile))
+        valid.append(small_list)
+
+  return valid
+
+################################################
+def insertions(entry, wordfile):
+
+  """
+  This function forms a list of possible
+  alternatives to the user's entry by
+  generating all possible single-letter
+  insertions.
+
+  Input -- user's entry, list of words
+  Return -- alternate spellings also found
+            in the list of words
+  """
+
+  valid = []
+
+  for i in range(len(entry)+1):
+    for j in range(26):
+      inlist = False
+      maybe_word = entry[0:i] + chr(97+j) + entry[i:len(entry)]
+      for k in range(len(valid)):
+        if (maybe_word == valid[k][0]):
+          inlist = True
+      if ((checkfile(maybe_word, wordfile) > 0) and\
+          (inlist == False)):
+        small_list = []
+        small_list.append(maybe_word)
+        small_list.append(checkfile(maybe_word, wordfile))
+        valid.append(small_list)
+
+  return valid
+
+################################################
+def sort(alt_words):
+
+  """
+  This function sorts the list of alternate
+  words by frequency.
+
+  Input -- list of alternate words
+  Return -- list of sorted words
+  """
+
+  for i in range(len(alt_words)):
+    most_freq = i
+    for j in range(i+1,len(alt_words)):
+      if (alt_words[j][1] > alt_words[most_freq][1]):
+        most_freq = j
+    temp = alt_words[i]
+    alt_words[i] = alt_words[most_freq]
+    alt_words[most_freq] = temp
+
+
+  return alt_words
+
+
+################################################
+def print_alt_list(alt_words, wordfile):
+
+  """
+  This function prints a list of alternatives
+  to the user's entry.
+
+  Input -- list of alternate words, list of valid words
+  Return -- none
+  """
+
+  found = False
+
+
+  for i in range(len(alt_words)):
+    answer = "start"
+    while ((answer != "yes") and (answer != "no")):
+      phrase = "Did you mean " + str(alt_words[i][0]) + \
+           " (frequency " + str(alt_words[i][1]) + ")? "
+      answer = raw_input(phrase)
+      if ((answer != "yes") and (answer != "no")):
+        print "Please enter yes or no."
+    if (answer == "yes"):
+      found = True
+      break
+    elif ((i == len(alt_words)-1) and (answer != "yes")):
+       print "Not found."
+
+
+
+  getEntry(wordfile)
+
+
+
+
+
+  """
+  answer = "start"
+
+  while ((answer != "yes") and (answer != "no")):
+    for i in range(len(alt_words)):
+      phrase = "Did you mean " + str(alt_words[i][0])+\
+           " (frequency " + str(alt_words[i][1])+\
+           ")? "
+      answer = raw_input(phrase)
+      if (answer == "yes"):
+        break
+      elif ((i == len(alt_words)-1) and (answer != "yes")):
+        print "Not found."
+      elif ((answer != "yes") and (answer != "no")):
+        print "Please enter yes or no."
+  """
+
+################################################
+
+if __name__ == '__main__': main()
+
+
+                                            
+
+
+
