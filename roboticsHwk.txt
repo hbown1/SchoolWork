@@ -1,0 +1,96 @@
+"""
+Hannah Bown
+Mobile Robotics - Zucker
+Homework 7
+"""
+import math
+from numpy import *
+import matplotlib.pyplot as plt
+
+
+def main():
+
+    J = 0
+    Q = matrix([[1,0],[0,0.1]])
+    R = 0.001
+
+    N = 100     # number of timesteps
+    t = N-1     # stepcount
+
+    # Initialize K and V matrices
+    K = [None]*(N+1)
+    V = [None]*(N+1)
+    q = [None]*(N+1)
+    q[1] = matrix([[1],[10]])
+    u = [None]*(N+1)
+    K[N] = matrix([[0],[0]])
+    V[N] = Q
+
+    # Initialize kp and kd
+    kp = [None]*(N+1)
+    kd = [None]*(N+1)
+
+    # Initialize A and B
+    B = matrix([[0],[0.02]])
+    A = matrix([[1,0.01],[0,1]])
+
+    # Initialize time counter
+    time = [None]*(N+1)
+
+    # Calculations for 2a
+    while(t>=1):
+
+      K[t] = ((B.transpose()*V[t+1]*B+R).I)*B.transpose()*V[t+1]*A
+      V[t] = Q + (K[t].transpose()*R*K[t]) + (A-B*K[t]).transpose()*V[t+1]*(A-B*K[t])
+
+      currMat = K[t]
+      currMat = currMat.tolist()
+      kp[t] = currMat[0][0]
+      kd[t] = currMat[0][1]
+
+      time[t] = t
+      t = t-1 # Update t
+
+
+    # Calculations for 2b
+    t=1
+    while(t<=N-1):
+      u[t] = -K[t]*q[t]
+      q[t+1] = A*q[t] + B*u[t]
+      J = J + (q[t].transpose()*Q*q[t]) + (u[t].transpose()*R*u[t])
+      t = t+1
+
+    # Comparing J and q[1].transpose()*V[1]*q[1]
+    J = J.tolist()
+    J = J[0][0]
+    print J
+    comp = q[1].transpose()*V[1]*q[1]
+    comp = comp.tolist()
+    comp = comp[0][0]
+    print comp
+
+    # Separate position and velocity into
+    # their own lists
+    t=1
+    x = [None]*(N+1)
+    y = [None]*(N+1)
+    while(t<N-1):
+      value = q[t].tolist()
+      x[t] = value[0][0]
+      y[t] = value[1][0]
+      t = t+1
+
+
+
+    # Plot results (from 2b)
+    plt.plot(time,x)
+    plt.plot(time,y)
+    plt.axis('equal')
+    plt.grid()
+    plt.title('Position and Velocity over Time')
+    plt.ylabel('Position is blue, Velocity is green')
+    plt.xlabel('Time')
+    plt.show()
+
+main()
+

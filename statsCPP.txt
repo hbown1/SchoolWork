@@ -1,0 +1,138 @@
+/*
+  This program reads in a series of integers in the range 0-100
+  and calculates their mean, standard deviation, and prints a
+  histogram.
+  Hannah Bown, 2012
+*/
+
+#include <iostream>
+#include <cmath>
+#include <stdio.h>
+using namespace std;
+
+int getIntegerArray(int data[], int capacity, int min, int max, int sentinel);
+float findMean(int data[], int size);
+int standardDeviation(int data[], int size, float mean);
+void histogram(int data[], int n, int min, int max, int binSize);
+
+int main(){
+
+  cout << endl;
+  cout << "This program calculates statistics on a set of given data." << endl;
+  cout << "It calculates the mean, standard deviation, and prints a" << endl;
+  cout << "histogram of the values." << endl << endl;
+
+  int data[50];
+  int size;
+
+  // Get values and put into array
+  size = getIntegerArray(data, 50, 0, 100, -1);
+
+  cout << "Read in " << size << " valid values." << endl << endl;
+
+  float mean;
+  mean = findMean(data, size);
+
+  standardDeviation(data, size, mean);
+
+  histogram(data, size, 0, 100, 10);
+
+  cout << endl;
+
+  return 0;
+
+}
+
+
+
+int getIntegerArray(int data[], int capacity, int min, int max, int sentinel){
+  cout << "Enter integers in the range 0-100 to be stored, -1 to end." << endl;
+
+  int entry = 0;
+  int counter = 0;
+  int size = 0;
+
+  while (entry != sentinel){
+    cout << "> ";
+    cin >> entry;
+    if (entry == sentinel){
+      break;
+    }
+    if ((entry < min) || (entry > max)){
+      cout << "Invalid value. Try again." << endl;
+    } else {
+    data[counter]=entry;
+    counter = counter + 1;
+    size = size + 1;
+  }
+  }
+  return size;
+
+
+
+}
+
+
+float findMean(int data[], int size){
+
+  int total = 0;
+  for (int i=0; i < size; i++){
+    total = total + data[i];
+  }
+  float  mean;
+  mean = (float)total/size;
+
+  cout << "Mean: " << mean << endl << endl;
+
+  return mean;
+}
+
+
+int standardDeviation(int data[], int size, float mean){
+
+  float total = 0.0;
+  for (int i=0; i < size; i++){
+    float temp = data[i]-mean;
+    total = total + pow(temp, 2);
+  }
+  total = total/size;
+  total = sqrt(total);
+
+  cout << "Standard deviation: " << total << endl << endl;
+
+}
+
+void histogram(int data[], int n, int min, int max, int binSize){
+
+  cout << "Histogram: " << endl;
+
+  for (int i = min; i < max; i = i + binSize){
+    // Don't print past max
+    if (i + binSize > max){
+      break;
+    }
+    printf("%3d -%3d: ", i, i + binSize - 1);
+    for (int j=0; j < n; j++){
+      if ((data[j] >= i) && (data[j] < i + binSize)){
+        cout << "*";
+      }
+    }
+    cout << endl;
+
+  }
+  // If max is not evenly divisible by binSize, make special bin
+  if ((((max +1)-min)%binSize) != 0){
+    printf("%3d -%3d: ", (max + 1 - min) - (max + 1 - min)%binSize, max);
+
+}
+  // If values fall into special bin, print them
+  for (int k=0; k < n; k++){
+    if ((data[k] >= (max + 1 - min) - (max + 1 - min)%binSize)
+        && (data[k] <= max)){
+      cout << "*";
+    }}
+  cout << endl;
+}
+
+
+

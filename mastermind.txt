@@ -1,0 +1,238 @@
+"""
+This program runs the game Mastermind.
+(Hannah Bown, 10-21-11)
+"""
+
+from random import *
+
+def main():
+
+  replay = True
+  while (replay == True):
+
+    name = IntroRules()
+    code = getRandCode()
+    i = 1
+    while (i < 11):
+      guess = getUsersGuess(i, name)
+      if (guess == code):
+        i = 11 #This terminate the while loop.
+        print
+        print "  Congratulations! You won!"
+      elif ((i == 10) and (guess != code)):
+        i = 11 #This terminates the while loop.
+        print
+        print "  I'm sorry, you didn't guess the correct code."
+        print "  The answer was: ", code
+      else:
+        checkguess(guess, code)
+        i = i + 1
+    replay = ExitMessage(name) #gets whether or not the user wants
+                           #to replay the game.
+
+##########################################
+def IntroRules():
+
+  """
+  Program prints a welcome statement and rules.
+
+  Input -- None
+  Return -- User's name
+  """
+  print
+  name = raw_input("What is your name? ")
+  print
+  print "Welcome to Mastermind, " + str(name) + "!"
+  print
+  print """  Mastermind is a code-breaking game. The computer has generated
+  a 4-letter code, where each letter is one of 6 possible letters
+  (abcdef, no repeats). You have 10 chances to guess the code.
+  After each guess, the computer will tell you how many exact and
+  and partial matches you achieved.
+
+  An exact match means the guessed letter
+  and its position in the code is correct.
+
+  A partial match means the letter is correct,
+  but the position is wrong.
+
+  If at any time you wish to exit the game,
+  type 'quit' as your guess."""
+
+  print
+  print "  Good luck, " + str(name) + "!"
+  print
+
+  return name
+
+
+##########################################
+def getRandCode():
+
+  """
+  Program generates a list of four random letters
+  using letters between and including a and f.
+
+  Input -- None
+  Return -- generated code
+  """
+
+
+  code = ""
+
+  l = ["a","b","c","d","e","f"]
+
+  while (len(code) != 4):
+
+    letter = choice(l)
+
+    if (letter not in code):
+      code = code + letter
+
+  return code
+
+
+##########################################
+def getUsersGuess(i, name):
+
+  """
+  Program asks user for a four letter guess,
+  and checks if the guess is a four letter
+  string made up of characters between a and f.
+
+  Input -- i (guess number), user's name
+  Return -- legitimate guess
+  """
+
+  usersguess = False
+
+  if (i ==10):
+    print "  This is your last guess, " + str(name) + "!"
+    print "  Think carefully!"
+
+  while (usersguess == False):
+    guess = raw_input("Enter guess number " + str(i) + ": ")
+
+    if (guess == "quit"):
+      print
+      exit()
+
+    goodletters = True
+    letters = "abcdef"
+
+    for m in range(4):
+      if (guess[m] not in letters):
+        goodletters = False
+
+    if ((len(guess) != 4)) or (goodletters == False):
+      ErrorMessage(name)
+    else:
+      usersguess = True
+
+  return guess
+
+##########################################
+def checkguess(guess, code):
+
+  """
+  Program checks guess against generated code.
+
+  Input -- guess, code
+  Return -- None
+  """
+
+  exact = exactmatches(guess, code)
+  partial = partialmatches(guess, code)
+  if (exact == 1):
+    print "        ", exact, "exact match (letter *and* position correct)"
+  else:
+    print "        ", exact, "exact matches (letter *and* position correct)"
+  if (partial == 1):
+    print "        ", partial, "partial match (letter correct, position incorrect)"
+  else:
+    print "        ", partial, "partial matches (letter correct, position incorrect)"
+
+##########################################
+def exactmatches(guess, code):
+
+  """
+  Program checks for exact matches.
+
+  Input -- guess and solution code
+  Return -- Number of exact matches
+  """
+
+
+  matches = 0
+  for j in range(4):
+    if (guess[j] == code [j]):
+      matches = matches + 1
+
+  return matches
+
+##########################################
+def partialmatches(guess,code):
+
+  """
+  Program checks for partial matches.
+
+  Input -- guess and solution code
+  Return -- Number of partial matches
+  """
+
+  matches = 0
+  for k in range(4):
+    if ((code[k] in guess) and (guess[k] != code[k])):
+      matches = matches + 1
+
+  return matches
+
+##########################################
+def ErrorMessage(name):
+
+  """
+  Program prints an error message.
+
+  Input -- User's name
+  Return -- None
+  """
+  print
+  print "  Your guess needs to be four characters long"\
+      "\n  and contain letters between a and f."
+  print "  Please try again, " + str(name) + "."
+  print
+
+
+##########################################
+def ExitMessage(name):
+
+  """
+  Program prints an exit message and invites the user
+  to play again.
+
+  Input -- User's name
+  Return -- Whether or not the user want to replay the game.
+  """
+
+
+  print "  Thanks for playing, " + str(name) + "!"
+  print
+ yn = False
+  while (yn == False):
+    replay = raw_input("Would you like to play again? (y/n): ")
+    print
+    if (replay == "y"):
+      replay = True
+      yn = True
+    elif (replay == "n"):
+      replay = False
+      yn = True
+
+  return replay
+
+##########################################
+
+
+
+main()
+

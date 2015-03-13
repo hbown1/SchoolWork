@@ -1,0 +1,75 @@
+"""
+This program uses both an iterative and recursive algorithm
+to solve the Towers of Hanoi problem, returning the minimum
+number of steps it takes to solve a puzzle for the given
+number of disks.
+(Hannah Bown, 11/20/11)
+"""
+
+def main():
+
+  print
+  print """  This program computes the minimum
+  number of steps it takes to solve
+  a Towers of Hanoi puzzle of a given
+  number of disks."""
+  print
+
+  disks = input("Enter the number of disks in the puzzle: ")
+  print
+  it = iterative_soln(disks)
+  rec = recursive_soln(disks)
+
+  print "For a Towers of Hanoi puzzle of size", disks,\
+      "it takes: "
+  print "          ", it, "steps (iteratively)"
+  print "          ", rec, "steps (recursively)"
+  print
+
+
+################################################
+def iterative_soln(disks):
+
+  """
+  This function uses an iterative algorithm to
+  determine the number of steps it takes to solve
+  a Towers of Hanoi problem for the given number
+  of disks.
+  Input -- number of disks
+  Return -- number of steps
+  """
+
+  if (disks == 1):
+    return 1
+
+  steps = 1
+
+  for i in range(disks-1):
+    steps = 1 + 2*steps
+
+  return steps
+
+
+
+################################################
+def recursive_soln(disks):
+
+  """
+  This function uses a recursive algorithm to
+  determine the number of steps it takes to solve
+  a Towers of Hanoi problem for the given number
+  of disks.
+  Input -- number of disks
+  Return -- number of steps
+  """
+
+  if (disks == 1):
+    return 1
+
+  steps = 1 + 2*recursive_soln(disks-1)
+
+  return steps
+
+
+main()
+

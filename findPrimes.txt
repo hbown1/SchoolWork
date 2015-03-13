@@ -1,0 +1,23 @@
+"""
+This program prints out all primes from 1 to 1000.
+(Hannah Bown, 9-19-11)
+"""
+
+def main():
+
+  print
+  print "This program prints out all primes from 1 to 1000."
+  print
+
+  for i in range (1,1001):
+    prime = True
+    for n in range(2,i):
+      if (i%n==0):
+        prime = False
+    if (prime==True):
+      print i
+
+  print
+
+
+main()

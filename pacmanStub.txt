@@ -1,0 +1,39 @@
+"""
+Simple agents used as Pacman AI
+Hannah Bown 2015
+"""
+
+
+class ReflexAgent(Agent):
+  "An agent that chooses to eat food, behaves randomly otherwise"
+
+  def getAction(self, state):
+
+    possibleActions = state.getLegalPacmanActions()
+    possibleActions.remove('Stop')
+
+    for i in possibleActions:
+      nextPos = state.generatePacmanSuccessor(i).getPacmanPosition()
+      if state.hasFood(nextPos[0], nextPos[1]):
+          return i
+
+    return choice(possibleActions)
+
+
+class StateAgent(Agent):
+  "Chooses to eat food, goes straight otherwise"
+
+  def getAction(self, state):
+    possibleActions = state.getLegalPacmanActions()
+    possibleActions.remove('Stop')
+
+    for i in possibleActions:
+      nextPos = state.generatePacmanSuccessor(i).getPacmanPosition()
+      if state.hasFood(nextPos[0], nextPos[1]):
+          return i
+
+    pacState = state.getPacmanState()
+    direction = pacState.getDirection()
+    if direction not in possibleActions:
+        return choice(possibleActions)
+    else: return direction
